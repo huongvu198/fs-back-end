@@ -17,11 +17,8 @@ export class WebhookController {
       Logger.log('Webhook banking return no data');
     }
 
-    Logger.log(
-      'handleTransactionPayment',
-      JSON.stringify(data),
-      JSON.stringify(res),
-    );
+    Logger.log('data', data);
+    Logger.log('res', res);
     //TODO: something
   }
 }
