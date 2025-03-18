@@ -18,7 +18,6 @@ export class WebhookController {
     }
 
     Logger.log('data', data);
-    Logger.log('res', res);
     //TODO: something
   }
 }
