@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Res, Logger } from '@nestjs/common';
 import { EApiTags } from '../../shared/enum';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BankTransaction } from './interface/webhook.interface';
 
 @ApiTags(EApiTags.WEBHOOK)
 @Controller('webhook')
@@ -12,7 +13,7 @@ export class WebhookController {
     description: 'receive Transaction Banking',
     operationId: 'receiveTransactionBanking',
   })
-  async handleTransactionPayment(@Body() data: any, @Res() res: any) {
+  async handleTransactionPayment(@Body() data: BankTransaction) {
     if (typeof data !== 'object') {
       Logger.log('Webhook banking return no data');
     }
