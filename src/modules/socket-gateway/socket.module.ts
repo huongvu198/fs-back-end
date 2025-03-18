@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SocketGateway } from './socket.gateway';
-import { IoAdapter } from '@nestjs/platform-socket.io';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  controllers: [],
   exports: [SocketGateway],
-  providers: [
-    SocketGateway,
-    {
-      provide: 'SOCKET_IO_ADAPTER',
-      useValue: new IoAdapter(),
-    },
-  ],
+  imports: [ConfigModule, JwtModule],
+  providers: [SocketGateway],
 })
 export class SocketsModule {}
