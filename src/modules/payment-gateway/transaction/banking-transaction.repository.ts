@@ -5,7 +5,7 @@ import { BaseRepository } from '../../../shared/mongo/mongoose';
 import {
   BankingTransaction,
   BankingTransactionDocument,
-} from './transaction.schema';
+} from './banking-transaction.schema';
 
 @Injectable()
 export class BankingTransactionRepository
