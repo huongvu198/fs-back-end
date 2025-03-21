@@ -13,7 +13,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { User, UserSchema } from '../users/users.schema';
+import { User, UserSchema } from '../users/admin/users.schema';
 import { MailModule } from '../send-mail/mail.module';
 import { AuthController } from './auth.controller';
 

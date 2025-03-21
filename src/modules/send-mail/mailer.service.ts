@@ -10,11 +10,8 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 const {
   host,
   port,
-  // ignoreTLS,
-  // secure,
-  // requireTLS,
-  // user,
-  // password: pass,
+  user,
+  password: pass,
   defaultEmail,
   defaultName,
 } = config.mail;
@@ -30,8 +27,8 @@ export class MailerService {
       requireTLS: false,
       ignoreTLS: true,
       auth: {
-        // user,
-        // pass,
+        user,
+        pass,
       },
     };
     this.transporter = nodemailer.createTransport(smtpConfig);

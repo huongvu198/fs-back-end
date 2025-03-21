@@ -1,5 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Address } from '../../users.schema';
+import { Address } from '../../customer/customers.schema';
 
 export class CreateCustomerResponse {
   _id: string;

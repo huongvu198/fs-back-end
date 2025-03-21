@@ -40,4 +40,5 @@ export enum ErrorCode {
   EMAIL_ALREADY_EXISTS = '005',
   USER_NOT_FOUND = '006',
   DEFAULT_ADDRESS = '007',
+  CREATE_CUSTOMER_FAILED = '008',
 }

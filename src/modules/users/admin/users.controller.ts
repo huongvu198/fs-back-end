@@ -18,22 +18,22 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Pagination } from '../../shared/pagination/pagination.decorator';
+import { Pagination } from '../../../shared/pagination/pagination.decorator';
 import {
   ApiPagination,
   IPagination,
-} from '../../shared/pagination/pagination.interface';
-import { Roles } from '../auth/decorator/roles.decorator';
-import { JWTAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
+} from '../../../shared/pagination/pagination.interface';
+import { Roles } from '../../auth/decorator/roles.decorator';
+import { JWTAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 
 import { UsersService } from './users.service';
-import { EApiTags, ERole } from '../../shared/enum';
+import { EApiTags, ERole } from '../../../shared/enum';
 import {
   CreateUserDto,
   GetUsersDto,
   UpdateUserDto,
-} from './dto/resquest/user.dto';
+} from '../dto/resquest/user.dto';
 
 @ApiTags(EApiTags.USER)
 @Controller('users')
