@@ -1,4 +1,4 @@
-import { UserDocument } from '../users.schema';
+import { UserDocument } from '../admin/users.schema';
 
 export class UserProfile {
   _id: UserDocument['_id'];

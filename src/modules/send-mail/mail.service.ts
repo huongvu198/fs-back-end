@@ -29,11 +29,60 @@ export class MailService {
       templatePath: path.join(
         'src',
         'modules',
-        'mail',
+        'send-mail',
         'mail-templates',
         'reset-password.hbs',
       ),
       text: `${url.toString()} ${resetPasswordTitle}`,
+      to: mailData.to,
+    });
+  }
+
+  async verifyAccount(
+    mailData: MailData<{ customer: string; codeExpires: Date }>,
+  ): Promise<void> {
+    const url = new URL(frontendUrl + '/verify');
+    console.log('url', url);
+    url.searchParams.set('customer', mailData.data.customer);
+    url.searchParams.set(
+      'codeExpires',
+      mailData.data.codeExpires.getTime().toString(),
+    );
+    const verifyAccountTitle = 'Verify Account';
+    console.log({
+      context: {
+        actionTitle: verifyAccountTitle,
+        text1: mailData.to.split('@')[0],
+        title: verifyAccountTitle,
+        url: url.toString(),
+      },
+      subject: verifyAccountTitle,
+      templatePath: path.join(
+        'src',
+        'modules',
+        'send-mail',
+        'mail-templates',
+        'verify-account.hbs',
+      ),
+      text: `${url.toString()} ${verifyAccountTitle}`,
+      to: mailData.to,
+    });
+    await this.mailerService.sendMail({
+      context: {
+        actionTitle: verifyAccountTitle,
+        text1: mailData.to.split('@')[0],
+        title: verifyAccountTitle,
+        url: url.toString(),
+      },
+      subject: verifyAccountTitle,
+      templatePath: path.join(
+        'src',
+        'modules',
+        'send-mail',
+        'mail-templates',
+        'verify-account.hbs',
+      ),
+      text: `${url.toString()} ${verifyAccountTitle}`,
       to: mailData.to,
     });
   }

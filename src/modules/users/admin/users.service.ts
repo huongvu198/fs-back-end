@@ -8,26 +8,26 @@ import { Logger } from '@nestjs/common';
 
 import * as bcrypt from 'bcryptjs';
 
-import { Errors } from '../../errors/errors';
-import { DEFAULT_SORT } from '../../shared/mongo/mongoose';
-import { PaginationHeaderHelper } from '../../shared/pagination/pagination.helper';
+import { Errors } from '../../../errors/errors';
+import { DEFAULT_SORT } from '../../../shared/mongo/mongoose';
+import { PaginationHeaderHelper } from '../../../shared/pagination/pagination.helper';
 import {
   IPagination,
   IPaginationResponse,
-} from '../../shared/pagination/pagination.interface';
-import { lowerCaseTransformer } from '../../shared/transformers/lower-case.transformer';
-import { RolesService } from '../roles/roles.service';
-import { AuthProvidersEnum, ERole } from '../../shared/enum';
-import { DeepPartial } from '../../shared/types/deep-partial.type';
-import { NullableType } from '../../shared/types/nullable.type';
-import { replaceQuerySearch } from '../../shared/helpers/common.helper';
+} from '../../../shared/pagination/pagination.interface';
+import { lowerCaseTransformer } from '../../../shared/transformers/lower-case.transformer';
+import { RolesService } from '../../roles/roles.service';
+import { AuthProvidersEnum, ERole } from '../../../shared/enum';
+import { DeepPartial } from '../../../shared/types/deep-partial.type';
+import { NullableType } from '../../../shared/types/nullable.type';
+import { replaceQuerySearch } from '../../../shared/helpers/common.helper';
 import { UsersRepository } from './users.repository';
 import { UserDocument } from './users.schema';
-import { config } from '../../config/app.config';
-import { transformPhoneNumber } from '../../shared/transformers/phone.transformer';
-import { UserProfile } from './interface/user.interface';
-import { CreateUserDto, GetUsersDto } from './dto/resquest/user.dto';
-import { CreateUserResponse } from './dto/reponse/user.response';
+import { config } from '../../../config/app.config';
+import { transformPhoneNumber } from '../../../shared/transformers/phone.transformer';
+import { UserProfile } from '../interface/user.interface';
+import { CreateUserDto, GetUsersDto } from '../dto/resquest/user.dto';
+import { CreateUserResponse } from '../dto/reponse/user.response';
 
 const { email, password, phoneNumber } = config.root;
 

@@ -1,4 +1,4 @@
-import { UserDocument } from '../../users/users.schema';
+import { UserDocument } from '../../users/admin/users.schema';
 
 export class CreateSessionDto {
   hash: string;

@@ -1,35 +1,33 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { UsersService } from './users.service';
-import { RolesService } from '../roles/roles.service';
-import { Errors } from '../../errors/errors';
-import { transformPhoneNumber } from '../../shared/transformers/phone.transformer';
-import { AuthProvidersEnum, ERole } from '../../shared/enum';
-import { lowerCaseTransformer } from '../../shared/transformers/lower-case.transformer';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UsersService } from '../admin/users.service';
+import { RolesService } from '../../roles/roles.service';
+import { Errors } from '../../../errors/errors';
+import { transformPhoneNumber } from '../../../shared/transformers/phone.transformer';
+import { AuthProvidersEnum, ERole } from '../../../shared/enum';
+import { lowerCaseTransformer } from '../../../shared/transformers/lower-case.transformer';
 import {
   AddAddressDto,
   CreateCustomerDto,
   UpdateCustomerDto,
-} from './dto/resquest/customer.dto';
+} from '../dto/resquest/customer.dto';
 import {
   AddAddressResponse,
-  AddressResponse,
   CreateCustomerResponse,
   CustomerDetailResponse,
   RemoveAddressResponse,
   UpdateCustomerResponse,
-} from './dto/reponse/customer.response';
+} from '../dto/reponse/customer.response';
+import { CustomersRepository } from './customers.repository';
+import { VerifyAccount } from './customers.schema';
+import dayjs from 'dayjs';
+import { MailService } from '../../send-mail/mail.service';
 
 @Injectable()
 export class CustomersService {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly customersRepository: CustomersRepository,
     private readonly usersService: UsersService,
-    private readonly rolesService: RolesService,
+    private readonly mailService: MailService,
   ) {}
 
   async createCustomer(
@@ -42,7 +40,6 @@ export class CustomersService {
     if (existingUser) {
       throw new BadRequestException(Errors.EMAIL_ALREADY_EXISTS);
     }
-    const role = await this.rolesService.findRoleByName(ERole.CUSTOMER);
 
     const phoneNumber = transformPhoneNumber(createProfileDto.phoneNumber);
 
@@ -54,19 +51,32 @@ export class CustomersService {
       createProfileDto.password,
     );
 
+    const verifyAccount = this.generateVerifyAccountInfo();
+
     const userPayload = {
       name: createProfileDto.name,
       email: lowerCaseTransformer(createProfileDto.email),
       phoneNumber: phoneNumber,
       password,
       provider: AuthProvidersEnum.EMAIL,
-      role: {
-        _id: role._id.toString(),
-        name: role.name,
-      },
+      isActivate: true,
+      verifyAccount: [verifyAccount],
     };
 
-    const result = await this.usersRepository.create(userPayload);
+    const result = await this.customersRepository.create(userPayload);
+
+    if (!result) {
+      throw new BadRequestException(Errors.CREATE_CUSTOMER_FAILED);
+    }
+
+    this.mailService.verifyAccount({
+      data: {
+        customer: result._id.toString(),
+        codeExpires: verifyAccount.codeExpires,
+      },
+      to: result.email,
+    });
+
     return {
       email: result.email,
       name: result.name,
@@ -76,7 +86,7 @@ export class CustomersService {
   }
 
   async getCustomerDetail(id: string): Promise<CustomerDetailResponse> {
-    const customer = await this.usersRepository.findById(id);
+    const customer = await this.customersRepository.findById(id);
     if (!customer) {
       throw new BadRequestException(Errors.USER_NOT_FOUND);
     }
@@ -93,11 +103,11 @@ export class CustomersService {
   async updateInfoCustomer(
     dto: UpdateCustomerDto,
   ): Promise<UpdateCustomerResponse> {
-    const customer = await this.usersRepository.findById(dto._id);
+    const customer = await this.customersRepository.findById(dto._id);
     if (!customer) {
       throw new BadRequestException(Errors.USER_NOT_FOUND);
     }
-    await this.usersRepository.updateById(dto._id, {
+    await this.customersRepository.updateById(dto._id, {
       name: dto.name,
       phoneNumber: dto.phoneNumber,
     });
@@ -114,7 +124,7 @@ export class CustomersService {
     id: string,
     dto: AddAddressDto,
   ): Promise<AddAddressResponse> {
-    const customer = await this.usersRepository.updateById(
+    const customer = await this.customersRepository.updateById(
       id,
       { $push: { addresses: dto } },
       { new: true },
@@ -133,7 +143,7 @@ export class CustomersService {
     customerId: string,
     addressId: string,
   ): Promise<RemoveAddressResponse> {
-    const customer = await this.usersRepository.findById(customerId);
+    const customer = await this.customersRepository.findById(customerId);
     if (!customer) {
       throw new BadRequestException(Errors.USER_NOT_FOUND);
     }
@@ -146,7 +156,7 @@ export class CustomersService {
       throw new BadRequestException(Errors.DEFAULT_ADDRESS);
     }
 
-    const updatedCustomer = await this.usersRepository.updateById(
+    const updatedCustomer = await this.customersRepository.updateById(
       customerId,
       { $pull: { addresses: { _id: addressId } } },
       { new: true },
@@ -159,5 +169,15 @@ export class CustomersService {
       phoneNumber: updatedCustomer.phoneNumber,
       addresses: updatedCustomer.addresses,
     };
+  }
+
+  generateVerifyAccountInfo() {
+    const verifyAccount: VerifyAccount = {
+      isVerify: false,
+      code: Math.floor(100000 + Math.random() * 900000).toString(),
+      codeExpires: dayjs().add(15, 'minutes').toDate(),
+    };
+
+    return verifyAccount;
   }
 }

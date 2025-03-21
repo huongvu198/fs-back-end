@@ -45,4 +45,9 @@ export const Errors: Record<string, ErrorType> = {
     message: 'Cannot delete the default address.',
     statusCode: HttpStatus.BAD_REQUEST,
   },
+  CREATE_CUSTOMER_FAILED: {
+    errorCode: getErrorCode(ErrorCode.CREATE_CUSTOMER_FAILED),
+    message: 'Create account failed. Please try again',
+    statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  },
 };
