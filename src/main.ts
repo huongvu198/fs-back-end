@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -16,6 +16,7 @@ async function bootstrap() {
     cors: true,
   });
   await initializeSwagger(app);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(SERVER_PORT);
 }
 void bootstrap().then(() => {

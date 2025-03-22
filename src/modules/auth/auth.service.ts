@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpStatus,
   Injectable,
   UnprocessableEntityException,
@@ -14,16 +15,20 @@ import { Errors } from '../../errors/errors';
 import { SessionService } from '../session/session.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { TokenData } from './dto/get-token-data.dto';
-import { LoginResponseDto } from './dto/login-response.dto';
+import {
+  LoginCustomerResponseDto,
+  LoginResponseDto,
+} from './dto/login-response.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResponseUserAuth } from './interface/auth.interface';
 import { UsersService } from '../users/admin/users.service';
 import { RedisCacheService } from '../../shared/redis-cache/redis-cache.service';
 import { UserDocument } from '../users/admin/users.schema';
-import { AuthProvidersEnum } from '../../shared/enum';
+import { AuthProvidersEnum, ERole } from '../../shared/enum';
 import { Role } from '../roles/roles.schema';
 import { MailService } from '../send-mail/mail.service';
-
+import { CustomerDocument } from '../users/customer/customers.schema';
+import { CustomersService } from '../users/customer/customers.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -32,6 +37,7 @@ export class AuthService {
     private readonly sessionService: SessionService,
     private readonly mailService: MailService,
     private readonly redisCacheService: RedisCacheService,
+    private readonly customersService: CustomersService,
   ) {}
 
   async validateLogin(loginDto: AuthLoginDto): Promise<UserDocument> {
@@ -56,6 +62,39 @@ export class AuthService {
 
     return user;
   }
+  async validateCustomerLogin(
+    loginDto: AuthLoginDto,
+  ): Promise<CustomerDocument> {
+    const customer = await this.customersService.findCustomerByEmail(
+      loginDto.email,
+    );
+
+    if (!customer) {
+      throw new UnprocessableEntityException(Errors.INCORRECT_EMAIL);
+    }
+
+    if (customer.provider !== AuthProvidersEnum.EMAIL) {
+      throw new UnprocessableEntityException(Errors.INCORRECT_PROVIDER);
+    }
+
+    if (!customer.isActivate) {
+      throw new BadRequestException(Errors.USER_BANNED);
+    }
+    if (!customer.isVerify) {
+      throw new BadRequestException(Errors.USER_HAS_NOT_VERIFY_EMAIL);
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      customer.password,
+    );
+
+    if (!isValidPassword) {
+      throw new UnprocessableEntityException(Errors.INCORRECT_USER_INFO);
+    }
+
+    return customer;
+  }
 
   async login(user: UserDocument): Promise<LoginResponseDto> {
     const hash = crypto
@@ -78,6 +117,34 @@ export class AuthService {
       token,
       tokenExpires,
       user: this.transformUser(user),
+    };
+  }
+  async loginCustomer(
+    customer: CustomerDocument,
+  ): Promise<LoginCustomerResponseDto> {
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+
+    const session = await this.sessionService.create({
+      hash,
+      user: customer.id,
+    });
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      email: customer.email,
+      hash,
+      id: customer.id,
+      name: customer.name,
+      sessionId: session.id,
+      role: ERole.CUSTOMER,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      customer: this.transformUser(customer),
     };
   }
 
@@ -195,10 +262,14 @@ export class AuthService {
     return { refreshToken, token, tokenExpires };
   }
 
-  transformUser(user: UserDocument): ResponseUserAuth {
+  transformUser(user: UserDocument | CustomerDocument): ResponseUserAuth {
     return {
       email: user.email,
-      role: user.role.name,
+      role: 'role' in user ? user.role.name : ERole.CUSTOMER,
     };
+  }
+
+  async logout(sessionId: string) {
+    await this.sessionService.deleteById(sessionId);
   }
 }

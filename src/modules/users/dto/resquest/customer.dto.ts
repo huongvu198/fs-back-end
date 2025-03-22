@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Length,
 } from 'class-validator';
 import { lowerCaseTransformer } from '../../../../shared/transformers/lower-case.transformer';
 import { Transform } from 'class-transformer';
@@ -77,4 +78,31 @@ export class AddAddressDto {
   @ApiProperty()
   @IsBoolean()
   isDefault: boolean;
+}
+
+export class VerifyAccountDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  customerId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  codeExpires: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @Length(6, 6, { message: 'Verification code must be exactly 6 characters' })
+  @Transform(({ value }) => String(value))
+  code: string;
+}
+
+export class ResendCodeVerifyDto {
+  @ApiProperty({ example: 'test@example.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  @Transform(({ value }) => lowerCaseTransformer(value))
+  email: string;
 }

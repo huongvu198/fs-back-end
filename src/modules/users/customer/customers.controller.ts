@@ -25,7 +25,9 @@ import { CustomersService } from './customers.service';
 import {
   AddAddressDto,
   CreateCustomerDto,
+  ResendCodeVerifyDto,
   UpdateCustomerDto,
+  VerifyAccountDto,
 } from '../dto/resquest/customer.dto';
 import {
   AddAddressResponse,
@@ -75,7 +77,7 @@ export class CustomerController {
   @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiOperation({
     description: 'to update customer',
-    operationId: 'updateCustomer',
+    operationId: 'updateInfoCustomer',
   })
   @HttpCode(HttpStatus.OK)
   async updateInfoCustomer(
@@ -90,7 +92,7 @@ export class CustomerController {
   @Roles(ERole.CUSTOMER)
   @ApiOperation({
     description: 'to add address',
-    operationId: 'addAddress',
+    operationId: 'addAddressCustomer',
   })
   @ApiParam({
     name: 'id',
@@ -109,7 +111,7 @@ export class CustomerController {
   @Roles(ERole.CUSTOMER)
   @ApiOperation({
     description: 'to remove address',
-    operationId: 'removeAddress',
+    operationId: 'removeAddressCustomer',
   })
   @ApiParam({
     name: 'id',
@@ -127,5 +129,24 @@ export class CustomerController {
     @Param('addressId') addressId: string,
   ): Promise<RemoveAddressResponse> {
     return await this.customersService.removeAddressCustomer(id, addressId);
+  }
+
+  @Post('verify')
+  @ApiOperation({
+    description: 'to verify account',
+    operationId: 'verifyAccount',
+  })
+  @HttpCode(HttpStatus.OK)
+  async verifyAccount(@Body() dto: VerifyAccountDto) {
+    return await this.customersService.verifyAccount(dto);
+  }
+  @Post('resend-verify')
+  @ApiOperation({
+    description: 'to resend code verify',
+    operationId: 'resendCodeVerify',
+  })
+  @HttpCode(HttpStatus.OK)
+  async resendCodeVerify(@Body() dto: ResendCodeVerifyDto) {
+    return await this.customersService.resendCodeVerify(dto);
   }
 }

@@ -39,40 +39,27 @@ export class MailService {
   }
 
   async verifyAccount(
-    mailData: MailData<{ customer: string; codeExpires: Date }>,
+    mailData: MailData<{
+      name: string;
+      customer: string;
+      codeExpires: Date;
+      code: string;
+    }>,
   ): Promise<void> {
     const url = new URL(frontendUrl + '/verify');
-    console.log('url', url);
     url.searchParams.set('customer', mailData.data.customer);
     url.searchParams.set(
       'codeExpires',
       mailData.data.codeExpires.getTime().toString(),
     );
     const verifyAccountTitle = 'Verify Account';
-    console.log({
-      context: {
-        actionTitle: verifyAccountTitle,
-        text1: mailData.to.split('@')[0],
-        title: verifyAccountTitle,
-        url: url.toString(),
-      },
-      subject: verifyAccountTitle,
-      templatePath: path.join(
-        'src',
-        'modules',
-        'send-mail',
-        'mail-templates',
-        'verify-account.hbs',
-      ),
-      text: `${url.toString()} ${verifyAccountTitle}`,
-      to: mailData.to,
-    });
     await this.mailerService.sendMail({
       context: {
         actionTitle: verifyAccountTitle,
-        text1: mailData.to.split('@')[0],
+        name: mailData.data.name,
         title: verifyAccountTitle,
         url: url.toString(),
+        code: mailData.data.code,
       },
       subject: verifyAccountTitle,
       templatePath: path.join(

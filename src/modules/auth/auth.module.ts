@@ -16,6 +16,8 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { User, UserSchema } from '../users/admin/users.schema';
 import { MailModule } from '../send-mail/mail.module';
 import { AuthController } from './auth.controller';
+import { LocalCustomerStrategy } from './strategies/local-customer.strategy';
+import { Customer, CustomerSchema } from '../users/customer/customers.schema';
 
 @Module({
   controllers: [AuthController],
@@ -31,10 +33,17 @@ import { AuthController } from './auth.controller';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
+      { name: Customer.name, schema: CustomerSchema },
     ]),
     MailModule,
     RedisCacheModule,
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy, SessionRepository],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    LocalStrategy,
+    SessionRepository,
+    LocalCustomerStrategy,
+  ],
 })
 export class AuthModule {}

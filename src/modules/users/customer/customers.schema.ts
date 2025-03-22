@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { RoleInfo } from '../../roles/roles.schema';
-import { AuthProvidersEnum } from '../../../shared/enum';
+import { AuthProvidersEnum, VerifyCodeEnum } from '../../../shared/enum';
 
 export type CustomerDocument = HydratedDocument<Customer>;
 
@@ -34,8 +34,8 @@ export const AddressSchema = SchemaFactory.createForClass(Address);
 
 @Schema({ timestamps: false })
 export class VerifyAccount {
-  @Prop({ default: false })
-  isVerify: boolean;
+  @Prop({ default: true })
+  valid: boolean;
 
   @Prop({ type: String, required: true })
   code: string;
@@ -45,6 +45,13 @@ export class VerifyAccount {
 
   @Prop({ type: Date, required: false })
   verifiedAt?: Date;
+
+  @Prop({
+    type: String,
+    enum: Object.values(VerifyCodeEnum),
+    default: VerifyCodeEnum.CREATE_ACCOUNT,
+  })
+  type: VerifyCodeEnum;
 }
 
 export const VerifyAccountSchema = SchemaFactory.createForClass(VerifyAccount);
@@ -88,8 +95,11 @@ export class Customer {
   @Prop({ type: [AddressSchema], default: [] })
   addresses: Address[];
 
-  @Prop({ type: Boolean, default: true })
+  @Prop({ type: Boolean, default: false })
   isActivate: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  isVerify: boolean;
 
   @Prop({ type: [VerifyAccountSchema], default: [], _id: false })
   verifyAccount: VerifyAccount[];

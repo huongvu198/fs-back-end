@@ -1,5 +1,8 @@
+import dayjs from 'dayjs';
 import { config } from '../../config/app.config';
+import { VerifyAccount } from '../../modules/users/customer/customers.schema';
 import { REGEX } from '../constants';
+import { VerifyCodeEnum } from '../enum';
 
 const { nodeEnv = '' } = config;
 
@@ -12,4 +15,15 @@ export const isDeployEnv = (env = nodeEnv) => {
 
 export const replaceQuerySearch = (search: string) => {
   return search.replace(REGEX.ESCAPE_SPECIAL_CHARS, '\\$&');
+};
+
+export const generateVerifyAccountInfo = (type: VerifyCodeEnum) => {
+  const verifyAccount: VerifyAccount = {
+    valid: true,
+    code: Math.floor(100000 + Math.random() * 900000).toString(),
+    codeExpires: dayjs().add(15, 'minutes').toDate(),
+    type: type,
+  };
+
+  return verifyAccount;
 };
