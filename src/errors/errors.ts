@@ -45,9 +45,34 @@ export const Errors: Record<string, ErrorType> = {
     message: 'Cannot delete the default address.',
     statusCode: HttpStatus.BAD_REQUEST,
   },
+  INVALID_VERIFYCATION_CODE: {
+    errorCode: getErrorCode(ErrorCode.INVALID_VERIFYCATION_CODE),
+    message: 'Invalid verification code',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  EXPIRED_VERIFYCATION_CODE: {
+    errorCode: getErrorCode(ErrorCode.EXPIRED_VERIFYCATION_CODE),
+    message: 'Expired verification code',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
   CREATE_CUSTOMER_FAILED: {
     errorCode: getErrorCode(ErrorCode.CREATE_CUSTOMER_FAILED),
     message: 'Create account failed. Please try again',
     statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  },
+  USER_HAS_NOT_VERIFY_EMAIL: {
+    errorCode: getErrorCode(ErrorCode.USER_HAS_NOT_VERIFY_EMAIL),
+    message: 'User has not verified email',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  USER_BANNED: {
+    errorCode: getErrorCode(ErrorCode.USER_BANNED),
+    message: 'User banned',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  INCORRECT_USER_INFO: {
+    errorCode: getErrorCode(ErrorCode.INCORRECT_USER_INFO),
+    message: 'Incorrect user information',
+    statusCode: HttpStatus.BAD_REQUEST,
   },
 };

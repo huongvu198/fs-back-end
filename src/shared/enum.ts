@@ -16,3 +16,8 @@ export enum AuthProvidersEnum {
   EMAIL = 'EMAIL',
   AUTH0 = 'AUTH0',
 }
+
+export enum VerifyCodeEnum {
+  RESEND_CODE = 'RESEND_CODE',
+  CREATE_ACCOUNT = 'CREATE_ACCOUNT',
+}

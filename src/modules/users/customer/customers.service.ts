@@ -1,14 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../admin/users.service';
-import { RolesService } from '../../roles/roles.service';
 import { Errors } from '../../../errors/errors';
 import { transformPhoneNumber } from '../../../shared/transformers/phone.transformer';
-import { AuthProvidersEnum, ERole } from '../../../shared/enum';
+import { AuthProvidersEnum, ERole, VerifyCodeEnum } from '../../../shared/enum';
 import { lowerCaseTransformer } from '../../../shared/transformers/lower-case.transformer';
 import {
   AddAddressDto,
   CreateCustomerDto,
+  ResendCodeVerifyDto,
   UpdateCustomerDto,
+  VerifyAccountDto,
 } from '../dto/resquest/customer.dto';
 import {
   AddAddressResponse,
@@ -18,9 +23,11 @@ import {
   UpdateCustomerResponse,
 } from '../dto/reponse/customer.response';
 import { CustomersRepository } from './customers.repository';
-import { VerifyAccount } from './customers.schema';
-import dayjs from 'dayjs';
 import { MailService } from '../../send-mail/mail.service';
+import { generateVerifyAccountInfo } from '../../../shared/helpers/common.helper';
+import dayjs from 'dayjs';
+import { CustomerDocument } from './customers.schema';
+import { NullableType } from '../../../shared/types/nullable.type';
 
 @Injectable()
 export class CustomersService {
@@ -51,7 +58,9 @@ export class CustomersService {
       createProfileDto.password,
     );
 
-    const verifyAccount = this.generateVerifyAccountInfo();
+    const verifyAccount = generateVerifyAccountInfo(
+      VerifyCodeEnum.CREATE_ACCOUNT,
+    );
 
     const userPayload = {
       name: createProfileDto.name,
@@ -59,7 +68,6 @@ export class CustomersService {
       phoneNumber: phoneNumber,
       password,
       provider: AuthProvidersEnum.EMAIL,
-      isActivate: true,
       verifyAccount: [verifyAccount],
     };
 
@@ -71,7 +79,9 @@ export class CustomersService {
 
     this.mailService.verifyAccount({
       data: {
+        name: userPayload.name,
         customer: result._id.toString(),
+        code: verifyAccount.code,
         codeExpires: verifyAccount.codeExpires,
       },
       to: result.email,
@@ -171,13 +181,77 @@ export class CustomersService {
     };
   }
 
-  generateVerifyAccountInfo() {
-    const verifyAccount: VerifyAccount = {
-      isVerify: false,
-      code: Math.floor(100000 + Math.random() * 900000).toString(),
-      codeExpires: dayjs().add(15, 'minutes').toDate(),
-    };
+  async verifyAccount(dto: VerifyAccountDto) {
+    const customer = await this.customersRepository.findById(dto.customerId);
+    if (!customer) throw new BadRequestException(Errors.USER_NOT_FOUND);
 
-    return verifyAccount;
+    const verifyData = customer.verifyAccount.find(
+      (v) => v.code === dto.code && v.valid === true,
+    );
+
+    if (!verifyData) {
+      throw new BadRequestException(Errors.INVALID_VERIFYCATION_CODE);
+    }
+
+    const codeExpiresStore = dayjs(verifyData.codeExpires);
+    const codeExpires = dayjs(Number(dto.codeExpires));
+
+    if (codeExpires.isBefore(codeExpiresStore)) {
+      throw new BadRequestException(Errors.EXPIRED_VERIFYCATION_CODE);
+    }
+
+    await this.customersRepository.updateById(dto.customerId, {
+      $set: {
+        isActivate: true,
+        isVerify: true,
+        'verifyAccount.$[].valid': false,
+      },
+    });
+
+    return customer;
+  }
+
+  async resendCodeVerify(dto: ResendCodeVerifyDto) {
+    const customer = await this.customersRepository.findOne({
+      email: dto.email,
+    });
+
+    if (!customer) throw new BadRequestException(Errors.USER_NOT_FOUND);
+
+    const customerId = customer._id.toString();
+
+    await this.customersRepository.updateById(customerId, {
+      $set: { 'verifyAccount.$[].valid': false },
+    });
+
+    const newVerifyData = generateVerifyAccountInfo(VerifyCodeEnum.RESEND_CODE);
+
+    await this.mailService.verifyAccount({
+      data: {
+        name: customer.name,
+        customer: customerId,
+        codeExpires: newVerifyData.codeExpires,
+        code: newVerifyData.code,
+      },
+      to: customer.email,
+    });
+
+    await this.customersRepository.updateById(customerId, {
+      $push: { verifyAccount: newVerifyData },
+    });
+  }
+
+  async findCustomerByEmail(
+    email: string,
+  ): Promise<NullableType<CustomerDocument>> {
+    const user: CustomerDocument = await this.customersRepository.findOne({
+      email: lowerCaseTransformer(email),
+    });
+
+    if (!user) {
+      throw new NotFoundException(Errors.USER_NOT_FOUND);
+    }
+
+    return user;
   }
 }
