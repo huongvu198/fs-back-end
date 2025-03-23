@@ -6,7 +6,7 @@ import {
 import { UsersService } from '../admin/users.service';
 import { Errors } from '../../../errors/errors';
 import { transformPhoneNumber } from '../../../shared/transformers/phone.transformer';
-import { AuthProvidersEnum, ERole, VerifyCodeEnum } from '../../../shared/enum';
+import { AuthProvidersEnum, VerifyCodeEnum } from '../../../shared/enum';
 import { lowerCaseTransformer } from '../../../shared/transformers/lower-case.transformer';
 import {
   AddAddressDto,
