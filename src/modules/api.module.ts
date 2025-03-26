@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { WebhookMudule } from './webhooks/webhook.module';
 import { SocketsModule } from './socket-gateway/socket.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SocketsModule } from './socket-gateway/socket.module';
     UsersModule,
     WebhookMudule,
     SocketsModule,
+    ProductsModule,
   ],
   providers: [],
 })
