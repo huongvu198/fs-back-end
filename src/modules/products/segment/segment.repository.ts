@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductSegment, ProductSegmentDocument } from './segment.schema';
 import { BaseRepository } from '../../../shared/mongo/mongoose';
-import { SegmentDto } from './dto/segment.response.dto';
+import { SegmentDto } from '../dto/segment.response.dto';
 
 @Injectable()
 export class ProductSegmentRepository

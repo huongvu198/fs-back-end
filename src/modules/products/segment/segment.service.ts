@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ProductSegmentRepository } from './segment.repository';
-import { CreateSegmentDto } from './dto/segment.request.dto';
+import { CreateSegmentDto } from '../dto/segment.request.dto';
 import { Errors } from '../../../errors/errors';
 import { convertToSlug } from '../../../shared/transformers/slug.transformer';
 import { removeVietnameseTones } from '../../../shared/transformers/vietnamese.transformer';
@@ -43,7 +43,7 @@ export class ProductSegmentService {
     });
   }
 
-  async updateSubcateForCategoryInSegment(
+  async updateSubcateBySegmentIdAndCategoryId(
     segmentId: ObjectId,
     categoryId: ObjectId,
     subcategories: any,

@@ -7,13 +7,26 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
   Post,
 } from '@nestjs/common';
-import { CreateSegmentDto } from './segment/dto/segment.request.dto';
-import { CreateCategoryDto } from './categories/dto/category.request.dto';
-import { CreateSubCategoryDto } from './sub-categories/dto/sub-category.request.dto';
+import { CreateSegmentDto } from './dto/segment.request.dto';
+import { CreateCategoryDto } from './dto/category.request.dto';
+import { CreateSubCategoryDto } from './dto/sub-category.request.dto';
 import { ProductCategoryService } from './categories/categories.service';
 import { ProductSubcategoryService } from './sub-categories/sub-categories.service';
+import { ProductService } from './products.service';
+import {
+  CreateProductDto,
+  UpdateProductDto,
+  UpdateSaleDto,
+} from './dto/product.request.dto';
+import {
+  ApiPagination,
+  IPagination,
+} from '../../shared/pagination/pagination.interface';
+import { Pagination } from '../../shared/pagination/pagination.decorator';
 
 @ApiTags(EApiTags.PRODUCT)
 @Controller('product')
@@ -22,6 +35,7 @@ export class ProductsController {
     private readonly productSegmentService: ProductSegmentService,
     private readonly productCategoryService: ProductCategoryService,
     private readonly productSubcategoryService: ProductSubcategoryService,
+    private readonly productService: ProductService,
   ) {}
 
   @Get('get-segments')
@@ -60,5 +74,73 @@ export class ProductsController {
   @HttpCode(HttpStatus.CREATED)
   async createSubCategory(@Body() dto: CreateSubCategoryDto) {
     return await this.productSubcategoryService.create(dto);
+  }
+
+  @Post('create-product')
+  @ApiOperation({
+    description: 'to create product',
+    operationId: 'createProduct',
+  })
+  @HttpCode(HttpStatus.CREATED)
+  async createProduct(@Body() dto: CreateProductDto) {
+    return await this.productService.create(dto);
+  }
+
+  @Patch('archive/:id')
+  @ApiOperation({
+    description: 'to archive product',
+    operationId: 'archiveProduct',
+  })
+  @HttpCode(HttpStatus.OK)
+  async archiveProduct(@Param('id') productId: string) {
+    return await this.productService.archive(productId);
+  }
+
+  @Get('new-arrivals')
+  @ApiOperation({
+    description: 'to get new arrivals',
+    operationId: 'getNewArrivals',
+  })
+  @ApiPagination()
+  @HttpCode(HttpStatus.OK)
+  async getNewArrivals(@Pagination() pagination: IPagination) {
+    return await this.productService.findNewArrivals(pagination);
+  }
+
+  @Get('best-sellers')
+  @ApiOperation({
+    description: 'to get best sellers',
+    operationId: 'getBestSellers',
+  })
+  @ApiPagination()
+  @HttpCode(HttpStatus.OK)
+  async getBestSellers(@Pagination() pagination: IPagination) {
+    return await this.productService.findBestSellers(pagination);
+  }
+
+  @Patch('update-basic/:id')
+  @ApiOperation({
+    description: 'to update product',
+    operationId: 'updateBasicProduct',
+  })
+  @HttpCode(HttpStatus.OK)
+  async updateBasicProduct(
+    @Param('id') productId: string,
+    @Body() dto: UpdateProductDto,
+  ) {
+    return await this.productService.updateBasicInfo(productId, dto);
+  }
+
+  @Patch('update-sale/:id')
+  @ApiOperation({
+    description: 'to update product',
+    operationId: 'updateSaleProduct',
+  })
+  @HttpCode(HttpStatus.OK)
+  async updateSaleProduct(
+    @Param('id') productId: string,
+    @Body() dto: UpdateSaleDto,
+  ) {
+    return await this.productService.updateSaleInfo(productId, dto);
   }
 }

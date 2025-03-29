@@ -16,6 +16,10 @@ import { ProductCategoryRepository } from './categories/categories.repository';
 import { ProductSubCategoryRepository } from './sub-categories/sub-categories.repository';
 import { ProductSubcategoryService } from './sub-categories/sub-categories.service';
 import { ProductCategoryService } from './categories/categories.service';
+import { ProducSchema, Product } from './products.schema';
+import { ProductRepository } from './products.repository';
+import { ProductService } from './products.service';
+import { PaginationHeaderHelper } from '../../shared/pagination/pagination.helper';
 
 @Module({
   controllers: [ProductsController],
@@ -23,21 +27,26 @@ import { ProductCategoryService } from './categories/categories.service';
     ProductSegmentService,
     ProductCategoryService,
     ProductSubcategoryService,
+    ProductService,
   ],
   imports: [
     MongooseModule.forFeature([
       { name: ProductSegment.name, schema: ProductSegmentSchema },
       { name: ProductCategory.name, schema: ProductCategorySchema },
       { name: ProductSubcategory.name, schema: ProductSubcategorySchema },
+      { name: Product.name, schema: ProducSchema },
     ]),
   ],
   providers: [
     ProductSegmentService,
     ProductCategoryService,
     ProductSubcategoryService,
+    ProductService,
     ProductSegmentRepository,
     ProductCategoryRepository,
     ProductSubCategoryRepository,
+    ProductRepository,
+    PaginationHeaderHelper,
   ],
 })
 export class ProductsModule {}

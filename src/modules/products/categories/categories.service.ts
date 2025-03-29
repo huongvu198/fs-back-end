@@ -3,7 +3,7 @@ import { Errors } from '../../../errors/errors';
 import { convertToSlug } from '../../../shared/transformers/slug.transformer';
 import { removeVietnameseTones } from '../../../shared/transformers/vietnamese.transformer';
 import { ProductCategoryRepository } from './categories.repository';
-import { CreateCategoryDto } from './dto/category.request.dto';
+import { CreateCategoryDto } from '../dto/category.request.dto';
 import { ProductSegmentService } from '../segment/segment.service';
 
 @Injectable()

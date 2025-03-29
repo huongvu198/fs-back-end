@@ -4,7 +4,7 @@ import { Errors } from '../../../errors/errors';
 import { convertToSlug } from '../../../shared/transformers/slug.transformer';
 import { removeVietnameseTones } from '../../../shared/transformers/vietnamese.transformer';
 import { ProductSubCategoryRepository } from './sub-categories.repository';
-import { CreateSubCategoryDto } from './dto/sub-category.request.dto';
+import { CreateSubCategoryDto } from '../dto/sub-category.request.dto';
 import { ProductCategoryService } from '../categories/categories.service';
 import { ProductSegmentService } from '../segment/segment.service';
 
@@ -54,12 +54,16 @@ export class ProductSubcategoryService {
       newSubCate,
     );
 
-    this.productSegmentService.updateSubcateForCategoryInSegment(
+    this.productSegmentService.updateSubcateBySegmentIdAndCategoryId(
       segment._id,
       category.id,
       newSubCate,
     );
 
     return newSubCate;
+  }
+
+  async findOneSubCategoryById(id: string) {
+    return await this.productSubcategoryRepository.findById(id);
   }
 }
