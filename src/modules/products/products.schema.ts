@@ -40,6 +40,7 @@ class Segment {
   categories: Category;
 }
 
+@Schema({ _id: false })
 export class Size {
   @Prop({ required: true })
   size: string;
@@ -59,6 +60,7 @@ export class Size {
 export type SizeDocument = HydratedDocument<Size>;
 export const SizeSchema = SchemaFactory.createForClass(Size);
 
+@Schema({ _id: false })
 export class Variant {
   @Prop({ required: true })
   color: string;

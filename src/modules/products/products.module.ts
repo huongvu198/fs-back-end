@@ -20,9 +20,10 @@ import { ProducSchema, Product } from './products.schema';
 import { ProductRepository } from './products.repository';
 import { ProductService } from './products.service';
 import { PaginationHeaderHelper } from '../../shared/pagination/pagination.helper';
+import { ProductsControllerCms } from './products.cms.controller';
 
 @Module({
-  controllers: [ProductsController],
+  controllers: [ProductsController, ProductsControllerCms],
   exports: [
     ProductSegmentService,
     ProductCategoryService,

@@ -16,6 +16,9 @@ export class ProductSubcategory {
 
   @Prop({ type: Boolean, default: true })
   isActive: boolean;
+
+  @Prop({ type: String })
+  categoryId: string;
 }
 
 export const ProductSubcategorySchema =

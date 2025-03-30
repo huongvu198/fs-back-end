@@ -23,6 +23,9 @@ export class ProductCategory {
 
   @Prop({ type: Boolean, default: true })
   isActive: boolean;
+
+  @Prop({ type: String })
+  segmentId: string;
 }
 
 export const ProductCategorySchema =

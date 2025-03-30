@@ -110,4 +110,9 @@ export const Errors: Record<string, ErrorType> = {
     message: 'Product not found',
     statusCode: HttpStatus.NOT_FOUND,
   },
+  PRODUCT_NOT_AVAILABLE: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_NOT_AVAILABLE),
+    message: 'Product not available',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
 };

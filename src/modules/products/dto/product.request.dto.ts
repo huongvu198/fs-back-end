@@ -28,6 +28,14 @@ class CreateSizeDto {
   @IsNotEmpty()
   @IsNumber()
   quantity: number;
+
+  @ApiProperty({ required: false })
+  @Transform(({ obj }) => obj.quantity)
+  inventory: number;
+
+  @ApiProperty({ required: false })
+  @Transform(() => 0)
+  soldQuantity: number;
 }
 
 export class CreateVariantDto {
@@ -99,44 +107,6 @@ export class CreateProductDto {
   variants: CreateVariantDto[];
 }
 
-export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  categoryId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  subCategoryId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  segmentId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  description?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  price?: number;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  isActive?: boolean;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  isArchived?: boolean;
-}
-
 export class UpdateSizeDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -179,6 +149,54 @@ class UpdateVariantDTO {
   sizes: UpdateSizeDto[];
 }
 
+export class UpdateProductDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  subCategoryId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  segmentId?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  description?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  price?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  isActive?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  isArchived?: boolean;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  discount?: number;
+
+  @ApiProperty({ type: [UpdateVariantDTO] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateVariantDTO)
+  variants: UpdateVariantDTO[];
+}
+
 export class UpdateSaleDto {
   @ApiPropertyOptional()
   @IsNumber()
@@ -189,4 +207,28 @@ export class UpdateSaleDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateVariantDTO)
   variants: UpdateVariantDTO[];
+}
+
+export class GetProductDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  isArchived?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  isActive?: boolean;
+
+  // @ApiPropertyOptional()
+  // @IsOptional()
+  // @IsString()
+  // category?: string;
 }

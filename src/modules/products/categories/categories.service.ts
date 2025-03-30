@@ -24,7 +24,10 @@ export class ProductCategoryService {
 
     const cateSlug = convertToSlug(removeVietnameseTones(dto.name));
 
-    const found = await this.productCategoryRepository.findOne({ cateSlug });
+    const found = await this.productCategoryRepository.findOne({
+      cateSlug,
+      segmentId: segment._id.toString(),
+    });
 
     if (found) {
       throw new BadRequestException(Errors.PRODUCT_CATEGORY_EXISTED);
@@ -32,7 +35,7 @@ export class ProductCategoryService {
 
     const newCategory = await this.productCategoryRepository.create({
       ...dto,
-      segment: segment.id,
+      segmentId: segment.id,
       cateSlug,
     });
 

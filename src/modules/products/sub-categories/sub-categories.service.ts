@@ -37,6 +37,7 @@ export class ProductSubcategoryService {
 
     const found = await this.productSubcategoryRepository.findOne({
       subCateSlug,
+      categoryId: category._id.toString(),
     });
 
     if (found) {
@@ -45,7 +46,7 @@ export class ProductSubcategoryService {
 
     const newSubCate = await this.productSubcategoryRepository.create({
       ...dto,
-      category: category.id,
+      categoryId: category.id,
       subCateSlug,
     });
 

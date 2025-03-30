@@ -7,6 +7,10 @@ export enum EApiTags {
   PRODUCT = 'products',
 }
 
+export enum EApiCmsTags {
+  PRODUCT = 'products-cms',
+}
+
 export enum ERole {
   ADMIN = 'ADMIN',
   SUPER_ADMIN = 'SUPER_ADMIN',
