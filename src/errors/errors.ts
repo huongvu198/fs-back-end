@@ -75,4 +75,44 @@ export const Errors: Record<string, ErrorType> = {
     message: 'Incorrect user information',
     statusCode: HttpStatus.BAD_REQUEST,
   },
+  SEGMENT_EXISTED: {
+    errorCode: getErrorCode(ErrorCode.SEGMENT_EXISTED),
+    message: 'Segment already exists',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  SEGMENT_NOT_FOUND: {
+    errorCode: getErrorCode(ErrorCode.SEGMENT_NOT_FOUND),
+    message: 'Segment not found',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
+  PRODUCT_CATEGORY_EXISTED: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_CATEGORY_EXISTED),
+    message: 'Product category already exists',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  PRODUCT_CATEGORY_NOT_FOUND: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND),
+    message: 'Product category not found',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
+  PRODUCT_SUBCATEGORY_EXISTED: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_SUBCATEGORY_EXISTED),
+    message: 'Product subcategory already exists',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  PRODUCT_SUBCATEGORY_NOT_FOUND: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_SUBCATEGORY_NOT_FOUND),
+    message: 'Product subcategory not found',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
+  PRODUCT_NOT_FOUND: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_NOT_FOUND),
+    message: 'Product not found',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
+  PRODUCT_NOT_AVAILABLE: {
+    errorCode: getErrorCode(ErrorCode.PRODUCT_NOT_AVAILABLE),
+    message: 'Product not available',
+    statusCode: HttpStatus.NOT_FOUND,
+  },
 };

@@ -4,6 +4,11 @@ export enum EApiTags {
   USER = 'users',
   CUSTOMER = 'customers',
   WEBHOOK = 'webhooks',
+  PRODUCT = 'products',
+}
+
+export enum EApiCmsTags {
+  PRODUCT = 'products-cms',
 }
 
 export enum ERole {
