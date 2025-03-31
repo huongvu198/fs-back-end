@@ -9,6 +9,7 @@ export enum EApiTags {
 
 export enum EApiCmsTags {
   PRODUCT = 'products-cms',
+  MASTER_DATA = 'master-data-cms',
 }
 
 export enum ERole {
@@ -25,4 +26,8 @@ export enum AuthProvidersEnum {
 export enum VerifyCodeEnum {
   RESEND_CODE = 'RESEND_CODE',
   CREATE_ACCOUNT = 'CREATE_ACCOUNT',
+}
+
+export enum MasterDataEnum {
+  MASTER = 'MASTER',
 }
